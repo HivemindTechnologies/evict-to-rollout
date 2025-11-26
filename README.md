@@ -67,7 +67,7 @@ helm upgrade --install evict-to-rollout \
   --version 0.1.0 \
   --namespace kube-system --create-namespace \
   --set schedule="*/2 * * * *" \
-  --set annotationSelector.key="evict-with-rollout" \
+  --set annotationSelector.key="evict-to-rollout" \
   --set annotationSelector.value="true"
 ```
 
@@ -76,7 +76,7 @@ Key values:
 | Value | Description | Default |
 | --- | --- | --- |
 | `schedule` | Cron expression for how often to scan nodes | `*/1 * * * *` |
-| `annotationSelector.key`/`.value` | Annotation pair that marks pods for rollout | `evict-with-rollout` / `true` |
+| `annotationSelector.key`/`.value` | Annotation pair that marks pods for rollout | `evict-to-rollout` / `true` |
 | `image.repository` / `.tag` | Container image that provides `kubectl` + `jq` | `ghcr.io/hivemindtechnologies/evict-to-rollout/kubectl-jq` / *(empty = use chart `appVersion`)* |
 | `serviceAccount.create` | Whether to create a dedicated SA | `true` |
 | `rbac.create` | Whether to install ClusterRole + binding | `true` |
@@ -126,7 +126,7 @@ For local testing the kind script (`devbox run test`) builds the image and loads
 - **Node termination grace vs schedule**: The CronJob only reacts on its schedule (default 1 minute). Ensure your node termination grace period (e.g., Karpenter’s default 2 minutes) comfortably exceeds `schedule interval + controller runtime`, otherwise the node may terminate before the rollout finishes.
 - **Rolling update strategy required**: Deployments must use the standard rolling update strategy so that a new pod starts before the old pod is deleted. StatefulSets or Deployments using `Recreate` will still experience downtime.
 - **Single replica + PDB**: Remember to pair single-replica workloads with a `PodDisruptionBudget` (`minAvailable: 1` / `maxUnavailable: 0`). Without it, Kubernetes can evict the pod immediately even if the controller is running.
-- **Annotation opt-in**: Only pods whose template contains the configured annotation (default `evict-with-rollout: "true"`) are handled. Forgetting the annotation means eviction proceeds as usual.
+- **Annotation opt-in**: Only pods whose template contains the configured annotation (default `evict-to-rollout: "true"`) are handled. Forgetting the annotation means eviction proceeds as usual.
 - **RBAC scope**: The included ClusterRole grants read access to nodes/pods and patch access to deployments. Tighten or namespace-scope it if your environment requires stricter permissions.
 
 Missing something? [Open an issue](https://github.com/HivemindTechnologies/evict-to-rollout/issues/new) with details so we can cover your use-case.
