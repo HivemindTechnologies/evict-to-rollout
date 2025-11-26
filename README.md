@@ -11,7 +11,7 @@ If you use a PodDisruptionBudget (PDB) with `minAvailable: 1`, the eviction is b
 
 This script acts as a bridge. It detects:
 1.  Nodes that are draining (`unschedulable: true`).
-2.  Pods on those nodes with the annotation `evict-with-rollout: "true"`.
+2.  Pods on those nodes with the annotation `evict-to-rollout: "true"`.
 3.  Deployments that are currently stable.
 
 When found, it triggers a **rollout** (per default: rolling restart) of the Deployment. This ensures a new pod is started on a different node *before* the old one is killed, guaranteeing zero downtime.
@@ -31,7 +31,7 @@ spec:
   template:
     metadata:
       annotations:
-        evict-with-rollout: "true"
+        evict-to-rollout: "true"
 ```
 
 Ensure you have a PDB that blocks eviction:

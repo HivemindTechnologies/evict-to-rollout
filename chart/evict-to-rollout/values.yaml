@@ -9,7 +9,7 @@ successfulJobsHistoryLimit: 1
 failedJobsHistoryLimit: 1
 
 annotationSelector:
-  key: evict-with-rollout
+  key: evict-to-rollout
   value: "true"
 
 serviceAccount:

@@ -45,8 +45,6 @@ helm --kube-context "${KUBE_CONTEXT}" upgrade --install "${RELEASE_NAME}" "${CHA
   --namespace "${CONTROLLER_NAMESPACE}" \
   --create-namespace \
   --set schedule="*/5 * * * *" \
-  --set annotationSelector.key="evict-with-rollout" \
-  --set annotationSelector.value="true" \
   --set image.repository="${LOCAL_IMAGE_REPO}" \
   --set image.tag="${LOCAL_IMAGE_TAG}" \
   --set image.pullPolicy="IfNotPresent" >/dev/null
