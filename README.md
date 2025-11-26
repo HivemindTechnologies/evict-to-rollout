@@ -55,7 +55,77 @@ export DRY_RUN=true
 ./evict_to_rollout.sh
 ```
 
-### 3. Deploy as CronJob
+## Deployment Options
 
-See `cronjob.yaml` for the full manifest including RBAC permissions.
+### Helm (recommended)
+
+This repository ships a Helm chart (`chart/evict-to-rollout`) so you can tweak the schedule, annotation selector, and naming without forking the manifest.
+
+```bash
+helm upgrade --install evict-to-rollout \
+  oci://ghcr.io/hivemindtechnologies/evict-to-rollout \
+  --version 0.1.0 \
+  --namespace kube-system --create-namespace \
+  --set schedule="*/2 * * * *" \
+  --set annotationSelector.key="evict-with-rollout" \
+  --set annotationSelector.value="true"
+```
+
+Key values:
+
+| Value | Description | Default |
+| --- | --- | --- |
+| `schedule` | Cron expression for how often to scan nodes | `*/1 * * * *` |
+| `annotationSelector.key`/`.value` | Annotation pair that marks pods for rollout | `evict-with-rollout` / `true` |
+| `image.repository` / `.tag` | Container image that provides `kubectl` + `jq` | `ghcr.io/hivemindtechnologies/evict-to-rollout/kubectl-jq` / *(empty = use chart `appVersion`)* |
+| `serviceAccount.create` | Whether to create a dedicated SA | `true` |
+| `rbac.create` | Whether to install ClusterRole + binding | `true` |
+
+See `chart/evict-to-rollout/values.yaml` for the full list.
+
+## Development & Testing
+
+This repo ships a `devbox.json` so everyone (including CI) uses the same versions of `helm`, `kubectl`, `kind`, and `jq`.
+
+```bash
+# Start a dev shell with all tools:
+devbox shell
+
+# Lint the chart:
+devbox run lint
+
+# Run the end-to-end test (requires Docker since it spins up kind):
+devbox run test
+```
+
+The test script (`scripts/test-kind.sh`) creates a 3-node kind cluster, installs the Helm chart, deploys a sample annotated app, cordons a node, runs the controller job manually, and asserts that the deployment was restarted and rescheduled onto a different node.
+
+GitHub Actions mirrors the same flow via `.github/workflows/ci.yaml`:
+
+- on every PR, it runs `helm lint` and the kind-based integration test.
+- on pushes to `main`, it additionally publishes:
+  - the multi-arch `kubectl-jq` image tagged as `latest` and `${LAST_TAG}-sha.${GITHUB_SHA::7}`
+  - a Helm chart tagged as `${LAST_TAG}-sha.${GITHUB_SHA::7}` to `oci://ghcr.io/hivemindtechnologies/evict-to-rollout`
+- on git tag pushes (e.g. `v0.2.0`), the same workflow publishes **stable** artifacts tagged with the release version
+
+### Building the controller image
+
+The CronJob runs a tiny Alpine image containing `kubectl`, `jq`, `bash`, and CA certificates. Build it (multi-arch) and push to GHCR with:
+
+```bash
+docker buildx build \
+  -f Dockerfile.kubectl-jq \
+  --platform linux/amd64,linux/arm64 \
+  -t ghcr.io/hivemindtechnologies/evict-to-rollout/kubectl-jq:latest \
+  --push .
+```
+### Release workflow
+
+The CI pipeline keeps versions in sync automatically:
+
+- For pushes to `main`, it reads the most recent git tag (or `0.0.0` if none exists) and publishes snapshot artifacts tagged as `<last-tag>-sha.<short-sha>`.
+- For pushes to annotated tags (e.g. `v0.3.0`), it strips the `v` prefix and publishes both the Docker image and the Helm chart with the exact release version.
+- The pipeline patches `chart/evict-to-rollout/Chart.yaml` on the fly so that `version` and `appVersion` match the artifact tag, and the default image tag in the chart inherits from `appVersion`.
+
+For local testing the kind script (`devbox run test`) builds the image and loads it directly into the cluster, so no registry push is required.
 

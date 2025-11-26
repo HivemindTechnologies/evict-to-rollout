@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # Configuration
-ANNOTATION_KEY="evict-with-rollout"
-ANNOTATION_VALUE="true"
+ANNOTATION_KEY=${ANNOTATION_KEY:-"evict-with-rollout"}
+ANNOTATION_VALUE=${ANNOTATION_VALUE:-"true"}
 DRY_RUN=${DRY_RUN:-false} # Set to true to print actions without executing
 
 log() {
@@ -116,3 +116,5 @@ for NODE in $NODES; do
 done
 
 log "Done."
+
+

@@ -1,0 +1,16 @@
+{
+  "packages": [
+    "kubectl@latest",
+    "kubernetes-helm@latest",
+    "kind@latest",
+    "jq@latest"
+  ],
+  "shell": {
+    "init_hook": [],
+    "scripts": {
+      "lint": "helm lint chart/evict-to-rollout",
+      "test": "./scripts/test-kind.sh"
+    }
+  }
+}
+

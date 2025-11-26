@@ -1,0 +1,20 @@
+apiVersion: v2
+name: evict-to-rollout
+description: Trigger rollout restarts for annotated workloads before draining nodes
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - kubernetes
+  - availability
+  - eviction
+  - pdb
+  - cronjob
+maintainers:
+  - name: Hivemind Technologies
+    url: https://github.com/HivemindTechnologies
+sources:
+  - https://github.com/HivemindTechnologies/evict-to-rollout
+home: https://github.com/HivemindTechnologies/evict-to-rollout
+
+

@@ -1,0 +1,18 @@
+# syntax=docker/dockerfile:1.6
+
+FROM alpine:3.20
+
+ARG KUBECTL_VERSION=v1.30.2
+ARG TARGETARCH
+
+RUN apk add --no-cache bash curl jq ca-certificates \
+ && case "${TARGETARCH:-amd64}" in \
+      amd64|x86_64) ARCH=amd64 ;; \
+      arm64|aarch64) ARCH=arm64 ;; \
+      *) echo "Unsupported architecture: ${TARGETARCH}" && exit 1 ;; \
+    esac \
+ && curl -fsSLo /usr/local/bin/kubectl "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/${ARCH}/kubectl" \
+ && chmod +x /usr/local/bin/kubectl
+
+ENTRYPOINT ["/bin/bash"]
+

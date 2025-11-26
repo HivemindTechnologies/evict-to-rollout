@@ -1,0 +1,11 @@
+To verify your installation:
+  1. Check the CronJob status:
+     kubectl get cronjob {{ include "evict-to-rollout.fullname" . }} -n {{ .Release.Namespace }}
+  2. Inspect the latest job/pod logs:
+     kubectl logs job/$(kubectl get jobs -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }} -o jsonpath='{.items[-1:].metadata.name}') -n {{ .Release.Namespace }}
+
+To trigger a dry run manually:
+  kubectl create job --from=cronjob/{{ include "evict-to-rollout.fullname" . }} evict-to-rollout-debug -n {{ .Release.Namespace }} \
+    --dry-run=client -o yaml | kubectl apply -f -
+
+

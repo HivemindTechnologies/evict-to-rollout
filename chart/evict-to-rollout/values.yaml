@@ -1,0 +1,35 @@
+image:
+  repository: ghcr.io/hivemindtechnologies/evict-to-rollout/kubectl-jq
+  tag: "" # defaults to chart appVersion when empty
+  pullPolicy: IfNotPresent
+
+schedule: "*/1 * * * *"
+concurrencyPolicy: Forbid
+successfulJobsHistoryLimit: 1
+failedJobsHistoryLimit: 1
+
+annotationSelector:
+  key: evict-with-rollout
+  value: "true"
+
+serviceAccount:
+  create: true
+  name: ""
+
+rbac:
+  create: true
+
+env: []
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+podAnnotations: {}
+podLabels: {}
+
+nameOverride: ""
+fullnameOverride: ""
+
