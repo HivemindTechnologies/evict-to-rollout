@@ -12,6 +12,8 @@ annotationSelector:
   key: evict-to-rollout
   value: "true"
 
+dryRun: false
+
 serviceAccount:
   create: true
   name: ""

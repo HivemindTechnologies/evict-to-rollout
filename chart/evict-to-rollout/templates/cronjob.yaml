@@ -44,6 +44,8 @@ spec:
                   value: {{ .Values.annotationSelector.key | quote }}
                 - name: ANNOTATION_VALUE
                   value: {{ .Values.annotationSelector.value | quote }}
+                - name: DRY_RUN
+                  value: {{ .Values.dryRun | quote }}
               volumeMounts:
                 - name: script
                   mountPath: /scripts

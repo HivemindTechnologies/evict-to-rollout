@@ -77,6 +77,7 @@ Key values:
 | --- | --- | --- |
 | `schedule` | Cron expression for how often to scan nodes | `*/1 * * * *` |
 | `annotationSelector.key`/`.value` | Annotation pair that marks pods for rollout | `evict-to-rollout` / `true` |
+| `dryRun` | Set `true` to log would-be rollouts without patching deployments | `false` |
 | `image.repository` / `.tag` | Container image that provides `kubectl` + `jq` | `ghcr.io/hivemindtechnologies/evict-to-rollout/kubectl-jq` / *(empty = use chart `appVersion`)* |
 | `serviceAccount.create` | Whether to create a dedicated SA | `true` |
 | `rbac.create` | Whether to install ClusterRole + binding | `true` |
