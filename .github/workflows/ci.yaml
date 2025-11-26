@@ -121,6 +121,6 @@ jobs:
           mkdir -p dist
           helm package chart/evict-to-rollout --destination dist
           VERSION=$(awk '/^version:/ {print $2}' chart/evict-to-rollout/Chart.yaml | tr -d '"')
-          REPO=$(echo "${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
+          REPO=$(echo "${GITHUB_REPOSITORY_OWNER}" | tr '[:upper:]' '[:lower:]')
           helm push "dist/evict-to-rollout-${VERSION}.tgz" "oci://ghcr.io/${REPO}"
 
