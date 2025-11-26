@@ -108,17 +108,6 @@ GitHub Actions mirrors the same flow via `.github/workflows/ci.yaml`:
   - a Helm chart tagged as `${LAST_TAG}-sha.${GITHUB_SHA::7}` to `oci://ghcr.io/hivemindtechnologies/evict-to-rollout`
 - on git tag pushes (e.g. `v0.2.0`), the same workflow publishes **stable** artifacts tagged with the release version
 
-### Building the controller image
-
-The CronJob runs a tiny Alpine image containing `kubectl`, `jq`, `bash`, and CA certificates. Build it (multi-arch) and push to GHCR with:
-
-```bash
-docker buildx build \
-  -f Dockerfile.kubectl-jq \
-  --platform linux/amd64,linux/arm64 \
-  -t ghcr.io/hivemindtechnologies/evict-to-rollout/kubectl-jq:latest \
-  --push .
-```
 ### Release workflow
 
 The CI pipeline keeps versions in sync automatically:
@@ -129,3 +118,10 @@ The CI pipeline keeps versions in sync automatically:
 
 For local testing the kind script (`devbox run test`) builds the image and loads it directly into the cluster, so no registry push is required.
 
+## References
+
+Related issues:
+
+- https://github.com/kubernetes-sigs/karpenter/issues/1599
+- https://github.com/kubernetes-sigs/karpenter/issues/2600
+- https://github.com/kubernetes/kubernetes/issues/90977
