@@ -124,7 +124,7 @@ For local testing the kind script (`devbox run test`) builds the image and loads
 
 ## Operational gotchas
 
-- **Node termination grace vs schedule**: The CronJob only reacts on its schedule (default 1 minute). Ensure your node termination grace period (e.g., Karpenter’s default 2 minutes) comfortably exceeds `schedule interval + controller runtime`, otherwise the node may terminate before the rollout finishes.
+- **Node termination grace vs schedule**: The CronJob only reacts on its schedule (default 1 minute). Ensure your node termination grace period comfortably exceeds `schedule interval + controller runtime`, otherwise the node may terminate before the rollout finishes.
 - **Rolling update strategy required**: Deployments must use the standard rolling update strategy so that a new pod starts before the old pod is deleted. StatefulSets or Deployments using `Recreate` will still experience downtime.
 - **Single replica + PDB**: Remember to pair single-replica workloads with a `PodDisruptionBudget` (`minAvailable: 1` / `maxUnavailable: 0`). Without it, Kubernetes can evict the pod immediately even if the controller is running.
 - **Annotation opt-in**: Only pods whose template contains the configured annotation (default `evict-to-rollout: "true"`) are handled. Forgetting the annotation means eviction proceeds as usual.
