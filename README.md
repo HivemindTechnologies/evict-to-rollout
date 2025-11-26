@@ -80,6 +80,9 @@ Key values:
 | `image.repository` / `.tag` | Container image that provides `kubectl` + `jq` | `ghcr.io/hivemindtechnologies/evict-to-rollout/kubectl-jq` / *(empty = use chart `appVersion`)* |
 | `serviceAccount.create` | Whether to create a dedicated SA | `true` |
 | `rbac.create` | Whether to install ClusterRole + binding | `true` |
+| `nodeSelector` / `tolerations` / `affinity` | Optional scheduling hints | `{}` |
+| `podAnnotations` / `podLabels` | Extra metadata for the CronJob pod | `{}` |
+| `resources` | CPU/memory requests & limits for the CronJob | `{}` |
 
 See `chart/evict-to-rollout/values.yaml` for the full list.
 

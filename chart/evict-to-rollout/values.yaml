@@ -19,8 +19,6 @@ serviceAccount:
 rbac:
   create: true
 
-env: []
-
 resources: {}
 
 nodeSelector: {}
